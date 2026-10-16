@@ -1,0 +1,29 @@
+{
+  "name": "/",
+  "type": "directory",
+  "children": [
+    {
+      "name": "level-one",
+      "type": "directory",
+      "children": [
+        {
+          "name": "level-two",
+          "type": "directory",
+          "children": [
+            {
+              "name": "level-three",
+              "type": "directory",
+              "children": [
+                {
+                  "name": "deep.txt",
+                  "type": "file",
+                  "data": "Deep VFS\n"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

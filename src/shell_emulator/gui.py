@@ -10,6 +10,7 @@ from typing import Iterable, Optional
 from .config import AppConfig, debug_lines
 from .engine import CommandEngine
 from .script_runner import run_script
+from .vfs import VirtualFileSystem, VfsError
 
 
 class ShellWindow:
@@ -47,10 +48,20 @@ class ShellWindow:
     def _show_startup(self) -> None:
         """Показывает параметры и выполняет заданный стартовый скрипт."""
         self._write_lines(debug_lines(self.config))
+        self._show_vfs_status()
         self._write("Эмулятор оболочки. Доступны команды: ls, cd, exit.")
         if self.config.script_path:
             self._run_startup_script(self.config.script_path)
         self._write_prompt()
+
+    def _show_vfs_status(self) -> None:
+        """Загружает VFS и показывает результат проверки JSON."""
+        try:
+            vfs = VirtualFileSystem.from_file(self.config.vfs_path)
+        except VfsError as error:
+            self._write(f"Ошибка VFS: {error}")
+            return
+        self._write(f"VFS загружена: {vfs.count_nodes()} узлов")
 
     def _run_startup_script(self, path: Path) -> None:
         """Показывает результат выполнения стартового скрипта."""

@@ -22,8 +22,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--vfs-path",
         type=Path,
-        default=Path("."),
-        help="Путь к физическому расположению VFS.",
+        default=Path("examples/vfs/minimal.json"),
+        help="Путь к JSON-файлу физического расположения VFS.",
     )
     parser.add_argument(
         "--script-path",

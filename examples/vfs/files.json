@@ -1,0 +1,34 @@
+{
+  "name": "/",
+  "type": "directory",
+  "children": [
+    {
+      "name": "docs",
+      "type": "directory",
+      "children": [
+        {
+          "name": "notes.txt",
+          "type": "file",
+          "data": "Учебные заметки\n"
+        },
+        {
+          "name": "image.bin",
+          "type": "file",
+          "encoding": "base64",
+          "data": "AAECAwQF"
+        }
+      ]
+    },
+    {
+      "name": "config.ini",
+      "type": "file",
+      "data": "[app]\nname=emulator\n"
+    },
+    {
+      "name": "payload.bin",
+      "type": "file",
+      "encoding": "base64",
+      "data": "AAECAwQF"
+    }
+  ]
+}

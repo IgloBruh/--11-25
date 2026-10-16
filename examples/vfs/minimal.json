@@ -1,0 +1,11 @@
+{
+  "name": "/",
+  "type": "directory",
+  "children": [
+    {
+      "name": "readme.txt",
+      "type": "file",
+      "data": "Minimal VFS\n"
+    }
+  ]
+}

@@ -24,7 +24,7 @@ class StageTwoTest(unittest.TestCase):
 
     def test_default_parameters_are_available(self) -> None:
         config = parse_config([])
-        self.assertEqual(config.vfs_path, Path("."))
+        self.assertEqual(config.vfs_path, Path("examples/vfs/minimal.json"))
         self.assertIsNone(config.script_path)
 
     def test_script_stops_after_first_error(self) -> None:

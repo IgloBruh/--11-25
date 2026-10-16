@@ -1,4 +1,4 @@
-# Успешный стартовый сценарий второго этапа
+# Стартовый сценарий для проверки команд REPL
 ls "folder with spaces"
 cd /tmp
-ls documents
+exit
