@@ -1,0 +1,4 @@
+# Сценарий останавливается на неизвестной команде
+ls before-error
+unknown-command
+ls must-not-run

@@ -1,0 +1,4 @@
+# Успешный стартовый сценарий второго этапа
+ls "folder with spaces"
+cd /tmp
+ls documents

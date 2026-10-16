@@ -23,6 +23,7 @@ class CommandResult:
 
 
 class CommandEngine:
+    """Разбирает строки и выполняет команды."""
 
     def __init__(self) -> None:
         self._commands: Dict[str, Callable[[List[str]], CommandResult]] = {
