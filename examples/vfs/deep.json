@@ -3,6 +3,11 @@
   "type": "directory",
   "children": [
     {
+      "name": "readme.txt",
+      "type": "file",
+      "data": "Deep VFS\n"
+    },
+    {
       "name": "level-one",
       "type": "directory",
       "children": [

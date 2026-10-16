@@ -37,6 +37,7 @@ class CommandEngine:
             "cal": self._calendar_command,
             "tree": self._tree_command,
             "who": self._who_command,
+            "cp": self._copy_command,
             "exit": self._exit_command,
         }
 
@@ -127,6 +128,21 @@ class CommandEngine:
         now = datetime.now()
         output = calendar.TextCalendar().formatmonth(now.year, now.month)
         return CommandResult(output=output.rstrip())
+
+    def _copy_command(self, tokens: List[str]) -> CommandResult:
+        """Копирует файл или каталог внутри VFS."""
+        if len(tokens) != 3:
+            return CommandResult(
+                error="Неверные аргументы: cp ожидает источник и назначение"
+            )
+        missing_vfs = self._require_vfs()
+        if missing_vfs:
+            return missing_vfs
+        try:
+            target = self.vfs.copy(tokens[1], tokens[2], self.current_path)
+        except VfsError as error:
+            return CommandResult(error=str(error))
+        return CommandResult(output=f"Скопировано: {target}")
 
     def _who_command(self, tokens: List[str]) -> CommandResult:
         """Показывает пользователя и имя текущего компьютера."""

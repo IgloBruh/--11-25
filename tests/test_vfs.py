@@ -19,7 +19,7 @@ class VirtualFileSystemTest(unittest.TestCase):
 
     def test_text_and_base64_files_are_supported(self) -> None:
         vfs = VirtualFileSystem.from_file(VFS_DIRECTORY / "files.json")
-        self.assertEqual(vfs.count_nodes(), 6)
+        self.assertEqual(vfs.count_nodes(), 7)
         self.assertEqual(vfs.read_file("config.ini"), b"[app]\nname=emulator\n")
         self.assertEqual(
             vfs.read_file("payload.bin"), b"\x00\x01\x02\x03\x04\x05"
@@ -27,7 +27,7 @@ class VirtualFileSystemTest(unittest.TestCase):
 
     def test_deep_vfs_contains_three_directory_levels(self) -> None:
         vfs = VirtualFileSystem.from_file(VFS_DIRECTORY / "deep.json")
-        self.assertEqual(vfs.count_nodes(), 5)
+        self.assertEqual(vfs.count_nodes(), 6)
 
     def test_invalid_json_is_reported(self) -> None:
         with self.assertRaises(VfsError):

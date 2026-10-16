@@ -29,6 +29,11 @@
       "type": "file",
       "encoding": "base64",
       "data": "AAECAwQF"
+    },
+    {
+      "name": "readme.txt",
+      "type": "file",
+      "data": "Files VFS\n"
     }
   ]
 }

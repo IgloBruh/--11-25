@@ -1,8 +1,10 @@
-# Проверка команд и остановки на ошибке VFS
+# Проверка команд cp и остановки на первой ошибке
+ls
+cp readme.txt readme-copy.txt
 ls
 cd .
 tree
 cal
 who
-ls missing
+cp missing.txt copy.txt
 ls must-not-run

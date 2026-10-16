@@ -1,6 +1,8 @@
-# Успешная проверка всех команд этапа 4
+# Успешная проверка всех команд этапа 5
 ls
 cd .
+cp readme.txt readme-copy.txt
+ls
 tree
 cal
 who

@@ -50,7 +50,7 @@ class ShellWindow:
         self._write_lines(debug_lines(self.config))
         self._show_vfs_status()
         self._write(
-            "Эмулятор оболочки. Команды: ls, cd, cal, tree, who, exit."
+            "Эмулятор оболочки. Команды: ls, cd, cp, cal, tree, who, exit."
         )
         if self.config.script_path:
             self._run_startup_script(self.config.script_path)

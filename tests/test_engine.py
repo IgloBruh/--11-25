@@ -47,6 +47,28 @@ class CommandEngineTest(unittest.TestCase):
         self.assertIn("docs/", result.output)
         self.assertIn("notes.txt", result.output)
 
+    def test_cp_copies_file_only_in_memory(self) -> None:
+        result = self.engine.execute_line("cp readme.txt copy.txt")
+        self.assertTrue(result.ok)
+        listing = self.engine.execute_line("ls")
+        self.assertIn("copy.txt", listing.output)
+
+    def test_cp_copies_directory_recursively(self) -> None:
+        result = self.engine.execute_line("cp docs docs-copy")
+        self.assertTrue(result.ok)
+        listing = self.engine.execute_line("ls docs-copy")
+        self.assertIn("notes.txt", listing.output)
+
+    def test_cp_reports_missing_source(self) -> None:
+        result = self.engine.execute_line("cp missing.txt copy.txt")
+        self.assertFalse(result.ok)
+        self.assertIn("Путь не найден", result.error)
+
+    def test_cp_requires_source_and_destination(self) -> None:
+        result = self.engine.execute_line("cp readme.txt")
+        self.assertFalse(result.ok)
+        self.assertIn("cp ожидает источник", result.error)
+
     def test_invalid_vfs_path_is_reported(self) -> None:
         result = self.engine.execute_line("cd missing")
         self.assertFalse(result.ok)

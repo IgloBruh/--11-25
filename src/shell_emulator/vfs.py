@@ -116,6 +116,13 @@ class VirtualFileSystem:
 
     def resolve(self, path: str, current: PathParts = ()) -> PathParts:
         """Преобразует абсолютный или относительный путь в части пути."""
+        parts = self._path_parts(path, current)
+        self._get_node(parts)
+        return parts
+
+    @staticmethod
+    def _path_parts(path: str, current: PathParts) -> PathParts:
+        """Нормализует абсолютный или относительный путь."""
         base = [] if path.startswith("/") else list(current)
         for part in path.split("/"):
             if not part or part == ".":
@@ -125,7 +132,6 @@ class VirtualFileSystem:
                     base.pop()
                 continue
             base.append(part)
-        self._get_node(tuple(base))
         return tuple(base)
 
     def current_name(self, path: PathParts) -> str:
@@ -155,6 +161,52 @@ class VirtualFileSystem:
         lines = [self.current_name(path)]
         self._tree_lines(node, lines, "")
         return "\n".join(lines)
+
+    def copy(self, source: str, destination: str, current: PathParts) -> str:
+        """Копирует файл или каталог в VFS без записи на диск."""
+        source_parts = self.resolve(source, current)
+        if not source_parts:
+            raise VfsError("Нельзя копировать корневой каталог")
+        source_node = self._get_node(source_parts)
+        destination_parts = self._path_parts(destination, current)
+        if not destination_parts:
+            raise VfsError("Не задан путь назначения")
+        target = self._existing_node(destination_parts)
+        if target and target.kind == "directory":
+            parent_parts = destination_parts
+            target_name = source_node.name
+            final_parts = destination_parts + (target_name,)
+            if target_name in target.children:
+                raise VfsError("Целевой объект уже существует")
+        else:
+            parent_parts = destination_parts[:-1]
+            target_name = destination_parts[-1]
+            final_parts = destination_parts
+        inside_source = final_parts[:len(source_parts)] == source_parts
+        if source_node.kind == "directory" and inside_source:
+            raise VfsError("Нельзя копировать каталог внутрь самого себя")
+        parent = self._get_node(parent_parts)
+        if parent.kind != "directory":
+            raise VfsError(f"Не каталог: {self.current_name(parent_parts)}")
+        parent.children[target_name] = self._clone_node(
+            source_node, target_name
+        )
+        return self.current_name(final_parts)
+
+    def _existing_node(self, path: PathParts) -> Optional[VfsNode]:
+        """Возвращает узел назначения или None, если его ещё нет."""
+        try:
+            return self._get_node(path)
+        except VfsError:
+            return None
+
+    @classmethod
+    def _clone_node(cls, node: VfsNode, name: str) -> VfsNode:
+        """Создаёт независимую копию узла и его дочерних элементов."""
+        clone = VfsNode(name=name, kind=node.kind, data=node.data)
+        for child in node.children.values():
+            clone.children[child.name] = cls._clone_node(child, child.name)
+        return clone
 
     def _get_node(self, path: PathParts) -> VfsNode:
         """Находит узел по абсолютным частям пути."""
