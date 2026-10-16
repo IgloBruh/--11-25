@@ -1,4 +1,7 @@
-# Стартовый сценарий для проверки команд REPL
-ls "folder with spaces"
-cd /tmp
+# Успешная проверка всех команд этапа 4
+ls
+cd .
+tree
+cal
+who
 exit

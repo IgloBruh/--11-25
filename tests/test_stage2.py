@@ -7,6 +7,10 @@ import unittest
 from shell_emulator.config import debug_lines, parse_config
 from shell_emulator.engine import CommandEngine
 from shell_emulator.script_runner import run_script
+from shell_emulator.vfs import VirtualFileSystem
+
+
+VFS_PATH = Path(__file__).parents[1] / "examples" / "vfs" / "minimal.json"
 
 
 class StageTwoTest(unittest.TestCase):
@@ -31,14 +35,15 @@ class StageTwoTest(unittest.TestCase):
         with TemporaryDirectory() as directory:
             path = Path(directory) / "start.script"
             path.write_text(
-                "ls first\nunknown\nls never-reached\n",
+                "ls\nunknown\nls never-reached\n",
                 encoding="utf-8",
             )
-            result = run_script(path, CommandEngine())
+            vfs = VirtualFileSystem.from_file(VFS_PATH)
+            result = run_script(path, CommandEngine(vfs))
 
         self.assertTrue(result.failed)
         transcript = "\n".join(result.transcript)
-        self.assertIn("> ls first", transcript)
+        self.assertIn("> ls", transcript)
         self.assertIn("> unknown", transcript)
         self.assertNotIn("never-reached", transcript)
         self.assertIn("Скрипт остановлен из-за ошибки.", transcript)
@@ -46,11 +51,12 @@ class StageTwoTest(unittest.TestCase):
     def test_comments_and_empty_lines_are_ignored(self) -> None:
         with TemporaryDirectory() as directory:
             path = Path(directory) / "start.script"
-            path.write_text("# comment\n\ncd /tmp\n", encoding="utf-8")
-            result = run_script(path, CommandEngine())
+            path.write_text("# comment\n\ncd .\n", encoding="utf-8")
+            vfs = VirtualFileSystem.from_file(VFS_PATH)
+            result = run_script(path, CommandEngine(vfs))
 
         self.assertFalse(result.failed)
-        self.assertIn("> cd /tmp", result.transcript)
+        self.assertIn("> cd .", result.transcript)
 
 
 if __name__ == "__main__":

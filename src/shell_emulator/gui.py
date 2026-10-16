@@ -49,7 +49,9 @@ class ShellWindow:
         """Показывает параметры и выполняет заданный стартовый скрипт."""
         self._write_lines(debug_lines(self.config))
         self._show_vfs_status()
-        self._write("Эмулятор оболочки. Доступны команды: ls, cd, exit.")
+        self._write(
+            "Эмулятор оболочки. Команды: ls, cd, cal, tree, who, exit."
+        )
         if self.config.script_path:
             self._run_startup_script(self.config.script_path)
         self._write_prompt()
@@ -61,6 +63,7 @@ class ShellWindow:
         except VfsError as error:
             self._write(f"Ошибка VFS: {error}")
             return
+        self.engine = CommandEngine(vfs)
         self._write(f"VFS загружена: {vfs.count_nodes()} узлов")
 
     def _run_startup_script(self, path: Path) -> None:
@@ -105,7 +108,8 @@ class ShellWindow:
 
 def main(config: Optional[AppConfig] = None) -> None:
     """Запускает приложение с заданной конфигурацией."""
-    active_config = config or AppConfig(Path("."), None)
+    default_vfs = Path("examples/vfs/minimal.json")
+    active_config = config or AppConfig(default_vfs, None)
     root = tk.Tk()
     ShellWindow(root, active_config)
     root.mainloop()

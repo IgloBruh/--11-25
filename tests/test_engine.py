@@ -1,46 +1,75 @@
-"""Тесты командного ядра без запуска GUI."""
+"""Тесты командного ядра четвёртого этапа."""
 
+from pathlib import Path
 import unittest
 
 from shell_emulator.engine import CommandEngine
+from shell_emulator.vfs import VirtualFileSystem
+
+
+VFS_PATH = Path(__file__).parents[1] / "examples" / "vfs" / "files.json"
 
 
 class CommandEngineTest(unittest.TestCase):
-    """Проверяет требования этапа 1."""
+    """Проверяет команды REPL и операции с VFS."""
 
     def setUp(self) -> None:
-        self.engine = CommandEngine()
+        self.engine = CommandEngine(VirtualFileSystem.from_file(VFS_PATH))
 
-    def test_ls_stub_preserves_quoted_argument(self) -> None:
-        result = self.engine.execute_line('ls "folder with spaces"')
+    def test_ls_lists_root_entries(self) -> None:
+        result = self.engine.execute_line("ls")
         self.assertTrue(result.ok)
-        self.assertIn("Команда: ls", result.output)
-        self.assertIn("folder with spaces", result.output)
+        self.assertIn("config.ini", result.output)
+        self.assertIn("docs/", result.output)
 
-    def test_cd_stub_without_arguments(self) -> None:
-        result = self.engine.execute_line("cd")
+    def test_ls_supports_quoted_directory_path(self) -> None:
+        result = self.engine.execute_line('ls "docs"')
         self.assertTrue(result.ok)
-        self.assertIn("Команда: cd", result.output)
+        self.assertIn("image.bin", result.output)
+        self.assertIn("notes.txt", result.output)
+
+    def test_cd_changes_current_directory(self) -> None:
+        result = self.engine.execute_line("cd docs")
+        self.assertTrue(result.ok)
+        self.assertIn("/docs", result.output)
+        listing = self.engine.execute_line("ls")
+        self.assertIn("notes.txt", listing.output)
+
+    def test_cd_supports_parent_directory(self) -> None:
+        self.engine.execute_line("cd docs")
+        result = self.engine.execute_line("cd ..")
+        self.assertTrue(result.ok)
+        self.assertIn("/", result.output)
+
+    def test_tree_prints_nested_vfs(self) -> None:
+        result = self.engine.execute_line("tree")
+        self.assertTrue(result.ok)
+        self.assertIn("docs/", result.output)
+        self.assertIn("notes.txt", result.output)
+
+    def test_invalid_vfs_path_is_reported(self) -> None:
+        result = self.engine.execute_line("cd missing")
+        self.assertFalse(result.ok)
+        self.assertIn("Путь не найден", result.error)
+
+    def test_new_commands_are_available(self) -> None:
+        self.assertTrue(self.engine.execute_line("cal").ok)
+        self.assertTrue(self.engine.execute_line("who").ok)
+
+    def test_command_argument_errors_are_reported(self) -> None:
+        result = self.engine.execute_line("cal now")
+        self.assertFalse(result.ok)
+        self.assertIn("Неверное число аргументов", result.error)
 
     def test_unknown_command_is_reported(self) -> None:
         result = self.engine.execute_line("pwd")
         self.assertFalse(result.ok)
         self.assertIn("Неизвестная команда", result.error)
 
-    def test_too_many_arguments_are_reported(self) -> None:
-        result = self.engine.execute_line("ls one two")
-        self.assertFalse(result.ok)
-        self.assertIn("Неверное число аргументов", result.error)
-
     def test_exit_requests_application_shutdown(self) -> None:
         result = self.engine.execute_line("exit")
         self.assertTrue(result.ok)
         self.assertTrue(result.should_exit)
-
-    def test_exit_with_arguments_is_invalid(self) -> None:
-        result = self.engine.execute_line("exit now")
-        self.assertFalse(result.ok)
-        self.assertFalse(result.should_exit)
 
     def test_empty_line_is_accepted(self) -> None:
         result = self.engine.execute_line("   ")

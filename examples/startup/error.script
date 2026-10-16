@@ -1,4 +1,8 @@
-# Сценарий останавливается на первой ошибке
-ls before-error
-unknown-command
+# Проверка команд и остановки на ошибке VFS
+ls
+cd .
+tree
+cal
+who
+ls missing
 ls must-not-run
