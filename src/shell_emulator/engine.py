@@ -80,9 +80,10 @@ class CommandEngine:
         invalid = self._validate_arguments(tokens, 1)
         missing_vfs = self._require_vfs()
         if invalid or missing_vfs:
-            return invalid or missing_vfs  # type: ignore[return-value]
+            return invalid or missing_vfs
         try:
-            path = tokens[1] if len(tokens) == 2 else "."
+            MAX_ARGUMENTS = 2
+            path = tokens[1] if len(tokens) == MAX_ARGUMENTS else "."
             target = self.vfs.resolve(path, self.current_path)
             nodes = self.vfs.list_directory(target)
         except VfsError as error:
@@ -96,9 +97,10 @@ class CommandEngine:
         invalid = self._validate_arguments(tokens, 1)
         missing_vfs = self._require_vfs()
         if invalid or missing_vfs:
-            return invalid or missing_vfs  # type: ignore[return-value]
+            return invalid or missing_vfs
         try:
-            path = tokens[1] if len(tokens) == 2 else "/"
+            MAX_ARGUMENTS = 2
+            path = tokens[1] if len(tokens) == MAX_ARGUMENTS else "/"
             self.current_path = self.vfs.change_directory(
                 path, self.current_path
             )
@@ -112,9 +114,10 @@ class CommandEngine:
         invalid = self._validate_arguments(tokens, 1)
         missing_vfs = self._require_vfs()
         if invalid or missing_vfs:
-            return invalid or missing_vfs  # type: ignore[return-value]
+            return invalid or missing_vfs
         try:
-            path = tokens[1] if len(tokens) == 2 else "."
+            MAX_ARGUMENTS = 2
+            path = tokens[1] if len(tokens) == MAX_ARGUMENTS else "."
             target = self.vfs.resolve(path, self.current_path)
             return CommandResult(output=self.vfs.tree(target))
         except VfsError as error:
@@ -131,7 +134,8 @@ class CommandEngine:
 
     def _copy_command(self, tokens: List[str]) -> CommandResult:
         """Копирует файл или каталог внутри VFS."""
-        if len(tokens) != 3:
+        MAX_ARGUMENTS = 3
+        if len(tokens) != MAX_ARGUMENTS:
             return CommandResult(
                 error="Неверные аргументы: cp ожидает источник и назначение"
             )
