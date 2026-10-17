@@ -82,8 +82,8 @@ class CommandEngine:
         if invalid or missing_vfs:
             return invalid or missing_vfs
         try:
-            MAX_ARGUMENTS = 2
-            path = tokens[1] if len(tokens) == MAX_ARGUMENTS else "."
+            max_arguments = 2
+            path = tokens[1] if len(tokens) == max_arguments else "."
             target = self.vfs.resolve(path, self.current_path)
             nodes = self.vfs.list_directory(target)
         except VfsError as error:
@@ -99,8 +99,8 @@ class CommandEngine:
         if invalid or missing_vfs:
             return invalid or missing_vfs
         try:
-            MAX_ARGUMENTS = 2
-            path = tokens[1] if len(tokens) == MAX_ARGUMENTS else "/"
+            max_arguments = 2
+            path = tokens[1] if len(tokens) == max_arguments else "/"
             self.current_path = self.vfs.change_directory(
                 path, self.current_path
             )
@@ -116,8 +116,8 @@ class CommandEngine:
         if invalid or missing_vfs:
             return invalid or missing_vfs
         try:
-            MAX_ARGUMENTS = 2
-            path = tokens[1] if len(tokens) == MAX_ARGUMENTS else "."
+            max_arguments = 2
+            path = tokens[1] if len(tokens) == max_arguments else "."
             target = self.vfs.resolve(path, self.current_path)
             return CommandResult(output=self.vfs.tree(target))
         except VfsError as error:
@@ -134,8 +134,8 @@ class CommandEngine:
 
     def _copy_command(self, tokens: List[str]) -> CommandResult:
         """Копирует файл или каталог внутри VFS."""
-        MAX_ARGUMENTS = 3
-        if len(tokens) != MAX_ARGUMENTS:
+        max_arguments = 3
+        if len(tokens) != max_arguments:
             return CommandResult(
                 error="Неверные аргументы: cp ожидает источник и назначение"
             )
